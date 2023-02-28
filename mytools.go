@@ -17,9 +17,14 @@ func main() {
 func userPref() (*flag.FlagSet, []string) {
 	firstCmd := flag.NewFlagSet("/var/log/nginx/error.log", flag.ExitOnError)
 	inputArg := os.Args
-	if len(os.Args) < 2 {
-		fmt.Println("kurang parameter 'json' atau 'text' untuk konversi")
-		os.Exit(1)
+	if len(os.Args) < 3 {
+		fmt.Println("Pilihan default untuk konversi ke format text")
+				createLog := makeLogFile("text")
+				if !createLog{
+					fmt.Println("Gagal membuat log")
+				}else{
+					fmt.Println("Berhasil membuat log")
+				}
 	}
 	return firstCmd, inputArg
 }
@@ -54,6 +59,23 @@ func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 				}else{
 					fmt.Println("Berhasil membuat log")
 				}
+			
+			default:
+				fmt.Println("Pilihan default untuk konversi ke format text")
+				createLog := makeLogFile(convTextCmd)
+				if !createLog{
+					fmt.Println("Gagal membuat log")
+				}else{
+					fmt.Println("Berhasil membuat log")
+				}
+			}
+		default:
+			fmt.Println("Pilihan default untuk konversi ke format text")
+			createLog := makeLogFile(convTextCmd)
+			if !createLog{
+				fmt.Println("Gagal membuat log")
+			}else{
+				fmt.Println("Berhasil membuat log")
 			}
 		}
 
