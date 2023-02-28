@@ -78,9 +78,9 @@ func makeLogFile(params string) bool {
 	}else{
 		fmt.Println("proses membuat file")
 		if params == "json"{
-			convToJson(params)
+			convToJson(msg)
 		}else{
-			convToText(params)
+			convToText(msg)
 		}
 	}
 	defer f.Close()
@@ -91,17 +91,27 @@ func makeLogFile(params string) bool {
 	return true
 }
 
-func convToJson(params string) bool {
-	fmt.Println("Berhasil membuat file json")
-	json, err := json.Marshal(params)
+func convToJson(msg string) bool {
+	json, err := json.Marshal(msg)
 	err = ioutil.WriteFile("error.json", json, 0644)
 	if err != nil {
 		log.Println(err)
 	}
+	fmt.Println("Berhasil membuat file json")
 	return true
 }
 
-func convToText(params string) bool {
+func convToText(msg string) bool {
+	txt, err := os.Create("error.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	defer txt.Close()
+	_, err = txt.WriteString(msg)
+	if err != nil {
+		log.Println(err)
+	}
+	
 	fmt.Println("Berhasil membuat file text")
 	return true
 }
