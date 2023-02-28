@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -35,10 +38,22 @@ func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 			case convJsonCmd:
 				firstInput.Parse(inputArgs[4:])
 				fmt.Println("Pilihan untuk konversi ke format json")
+				createLog := makeLogFile(convJsonCmd)
+				if !createLog{
+					fmt.Println("Gagal membuat log")
+				}else{
+					fmt.Println("Berhasil membuat log")
+				}
 
 			case convTextCmd:
 				firstInput.Parse(inputArgs[4:])
 				fmt.Println("Pilihan untuk konversi ke format text")
+				createLog := makeLogFile(convTextCmd)
+				if !createLog{
+					fmt.Println("Gagal membuat log")
+				}else{
+					fmt.Println("Berhasil membuat log")
+				}
 			}
 		}
 
@@ -53,4 +68,40 @@ func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 		fmt.Println("subcommand tidak dikenali")
 		os.Exit(1)
 	}
+}
+
+func makeLogFile(params string) bool {
+	msg := "ini error log"
+	f, err := os.OpenFile("error", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}else{
+		fmt.Println("proses membuat file")
+		if params == "json"{
+			convToJson(params)
+		}else{
+			convToText(params)
+		}
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+	log.Println(msg)
+
+	return true
+}
+
+func convToJson(params string) bool {
+	fmt.Println("Berhasil membuat file json")
+	json, err := json.Marshal(params)
+	err = ioutil.WriteFile("error.json", json, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	return true
+}
+
+func convToText(params string) bool {
+	fmt.Println("Berhasil membuat file text")
+	return true
 }
