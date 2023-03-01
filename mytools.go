@@ -11,7 +11,10 @@ import (
 
 func main() {
 	firstCmd, inputArg := userPref()
-	convOption(firstCmd, inputArg)
+	if len(inputArg) >= 3{
+		convOption(firstCmd, inputArg)
+		return
+	}
 }
 
 func userPref() (*flag.FlagSet, []string) {
@@ -68,7 +71,9 @@ func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 				}else{
 					fmt.Println("Berhasil membuat log")
 				}
+
 			}
+
 		default:
 			fmt.Println("Pilihan default untuk konversi ke format text")
 			createLog := makeLogFile(convTextCmd)
