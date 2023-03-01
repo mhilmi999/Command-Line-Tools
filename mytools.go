@@ -165,7 +165,7 @@ func generateMvLog(newLoc string, convOpt string) {
 	oldLocFile := baseNameFile + convOpt
 	err := os.Rename(oldLocFile, newLoc)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return
 }
