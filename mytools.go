@@ -11,7 +11,7 @@ import (
 
 func main() {
 	firstCmd, inputArg := userPref()
-	if len(inputArg) >= 3{
+	if len(inputArg) >= 3 {
 		convOption(firstCmd, inputArg)
 		return
 	}
@@ -22,18 +22,19 @@ func userPref() (*flag.FlagSet, []string) {
 	inputArg := os.Args
 	if len(os.Args) < 3 {
 		fmt.Println("Pilihan default untuk konversi ke format text")
-				createLog := makeLogFile("text")
-				if !createLog{
-					fmt.Println("Gagal membuat log")
-				}else{
-					fmt.Println("Berhasil membuat log")
-				}
+		createLog := makeLogFile("text")
+		if !createLog {
+			fmt.Println("Gagal membuat log")
+		} else {
+			fmt.Println("Berhasil membuat log")
+		}
 	}
 	return firstCmd, inputArg
 }
 
 func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 	convCmd := "-t"
+	convMove := "-o"
 	convJsonCmd := "json"
 	convTextCmd := "text"
 	helpCmd := "-h"
@@ -44,42 +45,52 @@ func convOption(firstInput *flag.FlagSet, inputArgs []string) {
 		case convCmd:
 			switch inputArgs[3] {
 			case convJsonCmd:
-				firstInput.Parse(inputArgs[4:])
-				fmt.Println("Pilihan untuk konversi ke format json")
-				createLog := makeLogFile(convJsonCmd)
-				if !createLog{
-					fmt.Println("Gagal membuat log")
-				}else{
-					fmt.Println("Berhasil membuat log")
+				if len(inputArgs) > 4 {
+					path := inputArgs[5]
+					generateMvLog(path, convJsonCmd)
+
+				} else {
+					firstInput.Parse(inputArgs[4:])
+					fmt.Println("Pilihan untuk konversi ke format json")
+					createLog := makeLogFile(convJsonCmd)
+					if !createLog {
+						fmt.Println("Gagal membuat log")
+					} else {
+						fmt.Println("Berhasil membuat log")
+					}
 				}
 
 			case convTextCmd:
 				firstInput.Parse(inputArgs[4:])
 				fmt.Println("Pilihan untuk konversi ke format text")
 				createLog := makeLogFile(convTextCmd)
-				if !createLog{
+				if !createLog {
 					fmt.Println("Gagal membuat log")
-				}else{
+				} else {
 					fmt.Println("Berhasil membuat log")
 				}
-			
+
 			default:
 				fmt.Println("Pilihan default untuk konversi ke format text")
 				createLog := makeLogFile(convTextCmd)
-				if !createLog{
+				if !createLog {
 					fmt.Println("Gagal membuat log")
-				}else{
+				} else {
 					fmt.Println("Berhasil membuat log")
 				}
 
 			}
 
+		case convMove:
+			path := inputArgs[3]
+			generateMvLog(path, convTextCmd)
+
 		default:
 			fmt.Println("Pilihan default untuk konversi ke format text")
 			createLog := makeLogFile(convTextCmd)
-			if !createLog{
+			if !createLog {
 				fmt.Println("Gagal membuat log")
-			}else{
+			} else {
 				fmt.Println("Berhasil membuat log")
 			}
 		}
@@ -102,11 +113,11 @@ func makeLogFile(params string) bool {
 	f, err := os.OpenFile("error", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
-	}else{
+	} else {
 		fmt.Println("proses membuat file")
-		if params == "json"{
+		if params == "json" {
 			convToJson(msg)
-		}else{
+		} else {
 			convToText(msg)
 		}
 	}
@@ -138,7 +149,23 @@ func convToText(msg string) bool {
 	if err != nil {
 		log.Println(err)
 	}
-	
+
 	fmt.Println("Berhasil membuat file text")
 	return true
+}
+
+func generateMvLog(newLoc string, convOpt string) {
+	createLog := makeLogFile(convOpt)
+	if !createLog {
+		fmt.Println("Gagal membuat log")
+	} else {
+		fmt.Println("Berhasil membuat log")
+	}
+	baseNameFile := "error."
+	oldLocFile := baseNameFile + convOpt
+	err := os.Rename(oldLocFile, newLoc)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return
 }
